@@ -4,8 +4,6 @@ using MediatR;
 
 namespace Application.TodoLists.Commands.PurgeTodoLists;
 
-[Authorize(Roles = "Administrator")]
-[Authorize(Policy = "CanPurge")]
 public record PurgeTodoListsCommand : IRequest;
 
 public class PurgeTodoListsCommandHandler : IRequestHandler<PurgeTodoListsCommand>

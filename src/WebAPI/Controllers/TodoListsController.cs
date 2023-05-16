@@ -1,5 +1,4 @@
-﻿using Application.Common.Security;
-using Application.TodoLists.Commands.CreateTodoList;
+﻿using Application.TodoLists.Commands.CreateTodoList;
 using Application.TodoLists.Commands.DeleteTodoList;
 using Application.TodoLists.Commands.UpdateTodoList;
 using Application.TodoLists.Queries.GetTodos;
@@ -7,8 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers;
 
-
-[Authorize]
 public class TodoListsController : ApiControllerBase
 {
     [HttpGet]
@@ -45,7 +42,6 @@ public class TodoListsController : ApiControllerBase
     public async Task<IActionResult> Delete(int id)
     {
         await Mediator.Send(new DeleteTodoListCommand(id));
-
         return NoContent();
     }
 }

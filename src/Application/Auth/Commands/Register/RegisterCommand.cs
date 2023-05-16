@@ -1,5 +1,7 @@
 ﻿using Application.Common.Interfaces;
 
+using Domain.Helpers;
+
 using MediatR;
 
 namespace Application.Auth.Commands.Register;
@@ -13,15 +15,26 @@ public class RegisterCommand : IRequest
 
 public class RegisterCommandHandler : IRequestHandler<RegisterCommand>
 {
-    private readonly IAccountService _accountService;
+    private readonly IApplicationDbContext _context;
 
-    public RegisterCommandHandler(IAccountService accountService)
+    public RegisterCommandHandler(IApplicationDbContext context)
     {
-        _accountService = accountService;
+        _context = context;
     }
 
     public async Task Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
-        await _accountService.RegisterAsync(new Common.Models.RegisterRequest(request.Email, request.Password),"");
+        var (passwordHashed, salt) = PasswordHasher.HashPassword(request.Password);
+
+        _context.UserInfos.Add(new Domain.Entities.UserInfo
+        {
+            CreatedTime = DateTime.UtcNow,
+            Email = request.Email,
+            NikeName = request.Email,
+            PasswordHash = passwordHashed,
+            Salt = salt
+        });
+
+        await _context.SaveChangesAsync(cancellationToken);
     }
 }

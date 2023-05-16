@@ -1,5 +1,4 @@
 ﻿using Application.Common.Interfaces;
-using Application.Common.Security;
 
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -12,8 +11,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.TodoLists.Queries.GetTodos;
 
-
-[Authorize]
 public record GetTodosQuery : IRequest<TodosVm>;
 
 public class GetTodosQueryHandler : IRequestHandler<GetTodosQuery, TodosVm>

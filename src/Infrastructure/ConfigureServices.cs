@@ -3,23 +3,18 @@ using Application.Common.Wrappers;
 
 using Domain.Settings;
 
-using Infrastructure.Identity;
 using Infrastructure.Persistence;
 using Infrastructure.Persistence.Interceptors;
 using Infrastructure.Services;
 
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
-using Newtonsoft.Json;
-
 using System.Text;
+using System.Text.Json;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -47,8 +42,7 @@ public static class ConfigureServices
         services.AddScoped<ApplicationDbContextInitialiser>();
 
         services.AddTransient<IDateTime, DateTimeService>();
-        services.AddTransient<IIdentityService, IdentityService>();
-        services.AddTransient<IAccountService, AccountService>();
+        services.AddTransient<IJwtService, JwtService>();
 
         services.Configure<JWTSettings>(configuration.GetSection("JWTSettings"));
         services.AddAuthentication(options => {
@@ -81,13 +75,13 @@ public static class ConfigureServices
                             context.HandleResponse();
                             context.Response.StatusCode = 401;
                             context.Response.ContentType = "application/json";
-                            var result = JsonConvert.SerializeObject(new Response<string>("You are not Authorized"));
+                            var result = JsonSerializer.Serialize(new Response<string>("You are not Authorized"));
                             return context.Response.WriteAsync(result);
                         },
                         OnForbidden = context => {
                             context.Response.StatusCode = 403;
                             context.Response.ContentType = "application/json";
-                            var result = JsonConvert.SerializeObject(new Response<string>("You are not authorized to access this resource"));
+                            var result = JsonSerializer.Serialize(new Response<string>("You are not authorized to access this resource"));
                             return context.Response.WriteAsync(result);
                         },
                     };

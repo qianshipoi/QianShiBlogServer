@@ -3,6 +3,7 @@ using Infrastructure.Persistence;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddJsonFile("appsettings.Local.json");
 
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
@@ -17,7 +18,6 @@ if (app.Environment.IsDevelopment())
         options.DocExpansion(DocExpansion.None);
     });
 
-    app.UseDeveloperExceptionPage();
     app.UseMigrationsEndPoint();
 
     // Initialise and seed database
@@ -35,13 +35,12 @@ else
 
 app.UseHealthChecks("/health");
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+//app.UseStaticFiles();
 
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-app.MapFallbackToFile("index.html");
 
 app.Run();

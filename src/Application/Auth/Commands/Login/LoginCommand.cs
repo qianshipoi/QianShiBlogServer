@@ -1,5 +1,4 @@
-﻿using Application.Common.Exceptions;
-using Application.Common.Interfaces;
+﻿using Application.Common.Interfaces;
 using Application.Common.Models;
 using Application.Common.Wrappers;
 
@@ -9,7 +8,7 @@ using MediatR;
 
 using Microsoft.EntityFrameworkCore;
 
-using System.Net;
+using System.Security.Claims;
 
 namespace Application.Auth.Commands.Login;
 
@@ -21,13 +20,13 @@ public class LoginCommand : IRequest<Response<AuthenticationResponse>>
 
 public class LoginCommandHandler : IRequestHandler<LoginCommand, Response<AuthenticationResponse>>
 {
-    private readonly IAccountService _accountService;
     private readonly IApplicationDbContext _context;
+    private readonly IJwtService _jwtService;
 
-    public LoginCommandHandler(IAccountService accountService, IApplicationDbContext context)
+    public LoginCommandHandler(IApplicationDbContext context, IJwtService jwtService)
     {
-        _accountService = accountService;
         _context = context;
+        _jwtService = jwtService;
     }
 
     public async Task<Response<AuthenticationResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
@@ -49,8 +48,14 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Response<Authen
             return new Response<AuthenticationResponse>("密码错误");
         }
 
-
-        return await _accountService.AuthenticateAsync(new AuthenticationRequest(request.UserName, request.Password), "");
+        return new Response<AuthenticationResponse>(new AuthenticationResponse
+        {
+            Id = user.Id.ToString(),
+            Email = user.Email,
+            UserName = user.NikeName,
+            JWToken = _jwtService.GetJwtToken(new List<Claim>()),
+            RefreshToken = _jwtService.GenerateRefreshToken("").Token
+        });
     }
 }
 

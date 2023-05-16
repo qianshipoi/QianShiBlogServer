@@ -9,8 +9,6 @@ using System.Reflection;
 
 using WebAPI.Services;
 
-using ZymLabs.NSwag.FluentValidation;
-
 namespace Microsoft.Extensions.DependencyInjection;
 
 public static class ConfigureServices
@@ -27,13 +25,6 @@ public static class ConfigureServices
             .AddDbContextCheck<ApplicationDbContext>();
 
         services.AddControllers();
-
-        services.AddScoped<FluentValidationSchemaProcessor>(provider => {
-            var validationRules = provider.GetService<IEnumerable<FluentValidationRule>>();
-            var loggerFactory = provider.GetService<ILoggerFactory>();
-
-            return new FluentValidationSchemaProcessor(provider, validationRules, loggerFactory);
-        });
 
         services.Configure<ApiBehaviorOptions>(options =>
           options.SuppressModelStateInvalidFilter = true);
