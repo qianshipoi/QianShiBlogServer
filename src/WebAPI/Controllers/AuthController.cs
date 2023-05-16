@@ -1,37 +1,27 @@
-﻿using Infrastructure.Identity;
+﻿using Application.Auth.Commands.Login;
+using Application.Auth.Commands.Register;
+using Application.Common.Models;
+using Application.Common.Wrappers;
 
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
 {
+    /// <summary>
+    /// 认证
+    /// </summary>
     public class AuthController : ApiControllerBase
     {
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly UserManager<ApplicationUser> _userManager;
-
-        public AuthController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager)
+        [HttpPost("login")]
+        public async Task<Response<AuthenticationResponse>> Login(LoginCommand command)
         {
-            _signInManager = signInManager;
-            _userManager = userManager;
+            return await Mediator.Send(command);
         }
 
-        [HttpPost]
-        public async Task<ActionResult> Login(string userName, string password)
+        [HttpPost("register")]
+        public async Task Register(RegisterCommand command)
         {
-            var user = await _userManager.FindByNameAsync(userName);
-            if (user == null)
-            {
-                return BadRequest("user not exist.");
-            }
-            var result = await _signInManager.PasswordSignInAsync(user, password, false, false);
-
-            if (!result.Succeeded)
-            {
-                return BadRequest(result);
-            }
-
-            return Ok();
+            await Mediator.Send(command);
         }
     }
 }

@@ -1,7 +1,10 @@
 ﻿using Application.Common.Exceptions;
+using Application.Common.Wrappers;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WebAPI.Filters;
 
@@ -9,15 +12,30 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
 {
     private readonly IDictionary<Type, Action<ExceptionContext>> _exceptionHandlers;
 
-	public ApiExceptionFilterAttribute()
-	{
+    public ApiExceptionFilterAttribute()
+    {
         _exceptionHandlers = new Dictionary<Type, Action<ExceptionContext>>
             {
                 { typeof(ValidationException), HandleValidationException },
                 { typeof(NotFoundException), HandleNotFoundException },
                 { typeof(UnauthorizedAccessException), HandleUnauthorizedAccessException },
                 { typeof(ForbiddenAccessException), HandleForbiddenAccessException },
+                { typeof(ApiException), HandleApiException }
             };
+    }
+
+    private void HandleApiException(ExceptionContext context)
+    {
+        var exception = (ApiException)context.Exception;
+
+        context.Result = new BadRequestObjectResult(new Response<string>()
+        {
+            Succeeded = false,
+            Message = exception.Message,
+            Errors = exception.Error?.ToList()
+        });
+
+        context.ExceptionHandled = true;
     }
 
     public override void OnException(ExceptionContext context)
@@ -30,7 +48,7 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
     private void HandleException(ExceptionContext context)
     {
         var type = context.Exception.GetType();
-        if(_exceptionHandlers.ContainsKey(type))
+        if (_exceptionHandlers.ContainsKey(type))
         {
             _exceptionHandlers[type].Invoke(context);
             return;

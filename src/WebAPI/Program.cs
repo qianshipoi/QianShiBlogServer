@@ -1,5 +1,7 @@
 using Infrastructure.Persistence;
 
+using Swashbuckle.AspNetCore.SwaggerUI;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApplicationServices();
@@ -9,6 +11,12 @@ builder.Services.AddWebAPIServices();
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
+    app.UseSwagger();
+    app.UseSwaggerUI(options => {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+        options.DocExpansion(DocExpansion.None);
+    });
+
     app.UseDeveloperExceptionPage();
     app.UseMigrationsEndPoint();
 
@@ -29,22 +37,11 @@ app.UseHealthChecks("/health");
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
-app.UseSwaggerUi3(settings => {
-    settings.Path = "/api";
-    settings.DocumentPath = "/api/specification.json";
-});
 app.UseRouting();
 
 app.UseAuthentication();
-app.UseIdentityServer();
 app.UseAuthorization();
-
-//app.MapControllerRoute(
-//    name: "default",
-//    pattern: "{controller}/{action=Index}/{id?}");
-
 app.MapControllers();
-
 app.MapFallbackToFile("index.html");
 
 app.Run();

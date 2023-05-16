@@ -12,12 +12,14 @@ public class IdentityService : IIdentityService
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IUserClaimsPrincipalFactory<ApplicationUser> _userClaimsPrincipalFactory;
     private readonly IAuthorizationService _authorizationService;
+    private readonly SignInManager<ApplicationUser> _signInManager;
 
-    public IdentityService(UserManager<ApplicationUser> userManager, IUserClaimsPrincipalFactory<ApplicationUser> userClaimsPrincipalFactory, IAuthorizationService authorizationService)
+    public IdentityService(UserManager<ApplicationUser> userManager, IUserClaimsPrincipalFactory<ApplicationUser> userClaimsPrincipalFactory, IAuthorizationService authorizationService, SignInManager<ApplicationUser> signInManager)
     {
         _userManager = userManager;
         _userClaimsPrincipalFactory = userClaimsPrincipalFactory;
         _authorizationService = authorizationService;
+        _signInManager = signInManager;
     }
 
     public async Task<bool> AuthorizeAsync(string userId, string policyName)
@@ -64,7 +66,7 @@ public class IdentityService : IIdentityService
 
     public async Task<string?> GetUserNameAsync(string userId)
     {
-        var user = await _userManager.Users.FirstAsync(u => u.Id == userId);
+        var user = await _userManager.Users.FirstAsync(u => u.UserName == userId);
 
         return user.UserName;
     }
@@ -74,5 +76,31 @@ public class IdentityService : IIdentityService
         var user = await _userManager.Users.SingleOrDefaultAsync(u => u.Id == userId);
 
         return user != null && await _userManager.IsInRoleAsync(user, role);
+    }
+
+    public async Task<Result> SignInAsync(string userName, string password)
+    {
+        var user = await _userManager.FindByNameAsync(userName);
+
+        if (user == null)
+        {
+            return Result.Failure(new string[] { "User does not exist." });
+        }
+
+        var result = await _signInManager.PasswordSignInAsync(user, password, false, false);
+
+        if(result.Succeeded)
+        {
+            return Result.Success();
+        }
+
+        if (result.IsLockedOut)
+        {
+            return Result.Failure(new string[] { "User has been locked out." });
+        }
+        else
+        {
+            return Result.Failure(new string[] { "Password error." });
+        }
     }
 }
