@@ -8,9 +8,10 @@ public class UserInfo : BaseEntity
 
     public string Salt { get; set; } = default!;
 
-    public DateTime CreatedTime { get; set; }
+    public DateTime Created { get; set; }
 
     public string? Avatar { get; set; }
 
     public string? NikeName { get; set; }
 }
+
