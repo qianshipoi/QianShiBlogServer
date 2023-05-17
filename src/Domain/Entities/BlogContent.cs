@@ -14,6 +14,10 @@ public class BlogContent : BaseAuditableEntity
 
     public bool AllowComment { get; set; }
 
+    public int CommentCount { get; set; }
+
     public virtual BlogContentText Text { get; set; } = default!;
+
+    public IList<BlogRelationships> Relationships { get; set; } = default!;
 }
 

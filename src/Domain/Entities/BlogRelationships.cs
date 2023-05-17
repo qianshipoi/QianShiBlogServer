@@ -6,7 +6,7 @@ public class BlogRelationships : BaseEntity
 
     public int Mid { get; set; }
 
-    public virtual BlogMeta? Meta { get; set; }
+    public virtual BlogMeta Meta { get; set; } = default!;
 
-    public virtual BlogContent? Content { get; set; }
+    public virtual BlogContent Content { get; set; } = default!;
 }

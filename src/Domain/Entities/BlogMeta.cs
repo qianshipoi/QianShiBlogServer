@@ -13,4 +13,6 @@ public class BlogMeta : BaseAuditableEntity
     public int Count { get; set; }
 
     public int Parent { get; set; }
+
+    public IList<BlogRelationships> Relationships { get; set; } = default!;
 }

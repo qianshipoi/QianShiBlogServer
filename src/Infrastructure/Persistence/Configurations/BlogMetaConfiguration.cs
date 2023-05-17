@@ -7,6 +7,10 @@ namespace Infrastructure.Persistence.Configurations;
 
 public class BlogMetaConfiguration : IEntityTypeConfiguration<BlogMeta>
 {
+    public BlogMetaConfiguration()
+    {
+    }
+
     public void Configure(EntityTypeBuilder<BlogMeta> builder)
     {
         builder.HasKey(x => x.Id);
@@ -19,6 +23,7 @@ public class BlogMetaConfiguration : IEntityTypeConfiguration<BlogMeta>
         builder.Property(t => t.Order)
             .HasDefaultValue(100)
             .IsRequired();
+
         builder.Property(t => t.Description).HasMaxLength(255);
 
         builder.Property(t => t.Type).HasMaxLength(16).IsRequired();
@@ -28,6 +33,7 @@ public class BlogMetaConfiguration : IEntityTypeConfiguration<BlogMeta>
         builder.Property(t => t.Parent).HasDefaultValue(0).IsRequired();
 
         builder.Property(t => t.CreatedBy).IsRequired();
+
         builder.Property(t => t.Created).IsRequired();
     }
 }

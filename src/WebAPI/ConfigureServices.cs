@@ -15,7 +15,7 @@ public static class ConfigureServices
 {
     public static IServiceCollection AddWebAPIServices(this IServiceCollection services)
     {
-        services.AddDatabaseDeveloperPageExceptionFilter();
+        //services.AddDatabaseDeveloperPageExceptionFilter();
 
         services.AddScoped<ICurrentUserService, CurrentUserService>();
 

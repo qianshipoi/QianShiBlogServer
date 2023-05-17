@@ -28,7 +28,7 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand>
 
         _context.UserInfos.Add(new Domain.Entities.UserInfo
         {
-            CreatedTime = DateTime.UtcNow,
+            Created = DateTime.UtcNow,
             Email = request.Email,
             NikeName = request.Email,
             PasswordHash = passwordHashed,
