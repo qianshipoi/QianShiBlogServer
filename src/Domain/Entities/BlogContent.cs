@@ -4,7 +4,7 @@ public class BlogContent : BaseAuditableEntity
 {
     public string Title { get; set; } = default!;
 
-    public string Subtitle { get; set; } = default!;
+    public string? Subtitle { get; set; }
 
     public int Order { get; set; }
 
@@ -18,6 +18,6 @@ public class BlogContent : BaseAuditableEntity
 
     public virtual BlogContentText Text { get; set; } = default!;
 
-    public IList<BlogRelationships> Relationships { get; set; } = default!;
+    public List<BlogMeta> Metas { get; set; } = new();
 }
 

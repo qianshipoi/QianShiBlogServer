@@ -19,6 +19,21 @@ namespace Infrastructure.Persistence.Migrations
                 .HasAnnotation("ProductVersion", "7.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
+            modelBuilder.Entity("BlogContentBlogMeta", b =>
+                {
+                    b.Property<int>("ContentsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MetasId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ContentsId", "MetasId");
+
+                    b.HasIndex("MetasId");
+
+                    b.ToTable("BlogContentBlogMeta");
+                });
+
             modelBuilder.Entity("Domain.Entities.Attachment", b =>
                 {
                     b.Property<int>("Id")
@@ -89,7 +104,6 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Subtitle")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
@@ -161,10 +175,9 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("int")
                         .HasDefaultValue(0);
 
-                    b.Property<string>("Type")
-                        .IsRequired()
+                    b.Property<int>("Type")
                         .HasMaxLength(16)
-                        .HasColumnType("varchar(16)");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -182,14 +195,20 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<int>("Cid")
                         .HasColumnType("int");
 
+                    b.Property<int>("ContentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MetaId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Mid")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Cid");
+                    b.HasIndex("ContentId");
 
-                    b.HasIndex("Mid");
+                    b.HasIndex("MetaId");
 
                     b.ToTable("BlogRelationships");
                 });
@@ -300,6 +319,21 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("UserInfos");
                 });
 
+            modelBuilder.Entity("BlogContentBlogMeta", b =>
+                {
+                    b.HasOne("Domain.Entities.BlogContent", null)
+                        .WithMany()
+                        .HasForeignKey("ContentsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.BlogMeta", null)
+                        .WithMany()
+                        .HasForeignKey("MetasId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Domain.Entities.BlogContentText", b =>
                 {
                     b.HasOne("Domain.Entities.BlogContent", "Content")
@@ -314,14 +348,14 @@ namespace Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Domain.Entities.BlogRelationships", b =>
                 {
                     b.HasOne("Domain.Entities.BlogContent", "Content")
-                        .WithMany("Relationships")
-                        .HasForeignKey("Cid")
+                        .WithMany()
+                        .HasForeignKey("ContentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.BlogMeta", "Meta")
-                        .WithMany("Relationships")
-                        .HasForeignKey("Mid")
+                        .WithMany()
+                        .HasForeignKey("MetaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -366,15 +400,8 @@ namespace Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Domain.Entities.BlogContent", b =>
                 {
-                    b.Navigation("Relationships");
-
                     b.Navigation("Text")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Domain.Entities.BlogMeta", b =>
-                {
-                    b.Navigation("Relationships");
                 });
 
             modelBuilder.Entity("Domain.Entities.TodoList", b =>

@@ -1,6 +1,11 @@
-﻿namespace Domain.Entities;
+﻿using Application.Common.Mappings;
 
-public class BlogMeta : BaseAuditableEntity
+using Domain.Entities;
+using Domain.Enums;
+
+namespace Application.BlogContents.Queries.GetBlogContentWithPagination;
+
+public class BlogMetaDto : IMapFrom<BlogMeta>
 {
     public string Name { get; set; } = default!;
 
@@ -13,6 +18,4 @@ public class BlogMeta : BaseAuditableEntity
     public int Count { get; set; }
 
     public int Parent { get; set; }
-
-    public List<BlogContent> Contents { get; set; } = new();
 }

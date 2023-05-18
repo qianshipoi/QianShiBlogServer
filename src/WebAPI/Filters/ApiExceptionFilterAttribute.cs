@@ -28,12 +28,8 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
     {
         var exception = (ApiException)context.Exception;
 
-        context.Result = new BadRequestObjectResult(new Response<string>()
-        {
-            Succeeded = false,
-            Message = exception.Message,
-            Errors = exception.Error?.ToList()
-        });
+        
+        context.Result = new BadRequestObjectResult(Response<string>.Failure(exception.Message, exception.Error?.ToList()));
 
         context.ExceptionHandled = true;
     }

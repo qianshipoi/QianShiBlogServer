@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class AddSomeEntities : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -47,7 +47,7 @@ namespace Infrastructure.Persistence.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Title = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Subtitle = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                    Subtitle = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Order = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<int>(type: "int", maxLength: 16, nullable: false),
@@ -75,8 +75,7 @@ namespace Infrastructure.Persistence.Migrations
                     Order = table.Column<int>(type: "int", nullable: false, defaultValue: 100),
                     Description = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Type = table.Column<string>(type: "varchar(16)", maxLength: 16, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Type = table.Column<int>(type: "int", maxLength: 16, nullable: false),
                     Count = table.Column<int>(type: "int", nullable: false),
                     Parent = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     Created = table.Column<DateTime>(type: "datetime(6)", nullable: false),
@@ -156,26 +155,53 @@ namespace Infrastructure.Persistence.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "BlogContentBlogMeta",
+                columns: table => new
+                {
+                    ContentsId = table.Column<int>(type: "int", nullable: false),
+                    MetasId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BlogContentBlogMeta", x => new { x.ContentsId, x.MetasId });
+                    table.ForeignKey(
+                        name: "FK_BlogContentBlogMeta_BlogContents_ContentsId",
+                        column: x => x.ContentsId,
+                        principalTable: "BlogContents",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_BlogContentBlogMeta_BlogMetas_MetasId",
+                        column: x => x.MetasId,
+                        principalTable: "BlogMetas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "BlogRelationships",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Cid = table.Column<int>(type: "int", nullable: false),
-                    Mid = table.Column<int>(type: "int", nullable: false)
+                    Mid = table.Column<int>(type: "int", nullable: false),
+                    MetaId = table.Column<int>(type: "int", nullable: false),
+                    ContentId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_BlogRelationships", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BlogRelationships_BlogContents_Cid",
-                        column: x => x.Cid,
+                        name: "FK_BlogRelationships_BlogContents_ContentId",
+                        column: x => x.ContentId,
                         principalTable: "BlogContents",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_BlogRelationships_BlogMetas_Mid",
-                        column: x => x.Mid,
+                        name: "FK_BlogRelationships_BlogMetas_MetaId",
+                        column: x => x.MetaId,
                         principalTable: "BlogMetas",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -213,19 +239,24 @@ namespace Infrastructure.Persistence.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
+                name: "IX_BlogContentBlogMeta_MetasId",
+                table: "BlogContentBlogMeta",
+                column: "MetasId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_BlogMetas_Type",
                 table: "BlogMetas",
                 column: "Type");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BlogRelationships_Cid",
+                name: "IX_BlogRelationships_ContentId",
                 table: "BlogRelationships",
-                column: "Cid");
+                column: "ContentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BlogRelationships_Mid",
+                name: "IX_BlogRelationships_MetaId",
                 table: "BlogRelationships",
-                column: "Mid");
+                column: "MetaId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TodoItems_ListId",
@@ -243,6 +274,9 @@ namespace Infrastructure.Persistence.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Attachments");
+
+            migrationBuilder.DropTable(
+                name: "BlogContentBlogMeta");
 
             migrationBuilder.DropTable(
                 name: "BlogContentTexts");
