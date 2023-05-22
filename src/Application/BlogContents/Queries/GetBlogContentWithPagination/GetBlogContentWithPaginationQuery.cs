@@ -34,6 +34,6 @@ public class GetBlogContentWithPaginationQueryHandler : IRequestHandler<GetBlogC
          .Where(x => x.Type == request.Type)
          .OrderBy(x => x.Modified)
          .ProjectTo<BlogContentDto>(_mapper.ConfigurationProvider)
-         .PaginatedListAsync(request.PageNumber, request.PageSize);
+         .PaginatedListAsync(request.PageNumber, request.PageSize, cancellationToken);
     }
 }

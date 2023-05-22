@@ -28,11 +28,8 @@ public class GetBlogContentByIdQueryHandler : IRequestHandler<GetBlogContentById
     public async Task<BlogContentDto> Handle(GetBlogContentByIdQuery request, CancellationToken cancellationToken)
     {
         var entity = await _context.BlogContents
-            .AsNoTracking()
-            .Include(x => x.Text)
-            //.Include(x => x.Relationships)
-            //.ThenInclude(x => x.Meta)
-            .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+           .AsNoTracking()
+           .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
         if (entity is null)
         {

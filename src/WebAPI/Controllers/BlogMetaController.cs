@@ -15,13 +15,13 @@ namespace WebAPI.Controllers;
 public class BlogMetaController : ApiControllerBase
 {
     [HttpGet("{id:int}")]
-    public async Task<BlogMetaDto> GetById(int id, CancellationToken cancellationToken = default)
+    public async Task<BlogMetaDto> GetBlogMetaById(int id, CancellationToken cancellationToken = default)
     {
         return await Mediator.Send(new GetBlogMetaByIdQuery(id), cancellationToken);
     }
 
     [HttpGet]
-    public async Task<PaginatedList<BlogMetaDto>> GetList([FromQuery] GetBlogMetasWithPaginationQuery query, CancellationToken cancellationToken = default)
+    public async Task<PaginatedList<BlogMetaDto>> GetBlogMetas([FromQuery] GetBlogMetasWithPaginationQuery query, CancellationToken cancellationToken = default)
     {
         return await Mediator.Send(query, cancellationToken);
     }
@@ -40,11 +40,4 @@ public class BlogMetaController : ApiControllerBase
     [HttpDelete("{id:int}")]
     public async Task Delete(int id, CancellationToken cancellationToken = default)
         => await Mediator.Send(new DeleteBlogMetaCommand(id), cancellationToken);
-}
-
-
-[Authorize]
-public class BlogContentController : ApiControllerBase
-{
-
 }

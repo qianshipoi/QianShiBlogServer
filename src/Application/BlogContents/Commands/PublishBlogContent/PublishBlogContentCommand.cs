@@ -7,7 +7,7 @@ using MediatR;
 
 namespace Application.BlogContents.Commands.PublishBlogContent;
 
-public record PublishBlogContentCommand(int Id) : IRequest;
+public record PublishBlogContentCommand(int Id, bool IsPublish) : IRequest;
 
 public class PublishBlogContentCommandHandler : IRequestHandler<PublishBlogContentCommand>
 {
@@ -27,7 +27,7 @@ public class PublishBlogContentCommandHandler : IRequestHandler<PublishBlogConte
             throw new NotFoundException(nameof(BlogContent), request.Id);
         }
 
-        entity.Status = Domain.Enums.BlogContentStatus.Publish;
+        entity.Status = request.IsPublish ? Domain.Enums.BlogContentStatus.Publish : Domain.Enums.BlogContentStatus.Draft;
 
         await _context.SaveChangesAsync(cancellationToken);
     }

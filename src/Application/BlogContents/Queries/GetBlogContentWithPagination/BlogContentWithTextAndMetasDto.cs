@@ -1,12 +1,18 @@
-﻿using Application.Common.Mappings;
+﻿using Application.BlogMetas.Queries.GetBlogMetasWithPagination;
+using Application.Common.Mappings;
 
 using Domain.Entities;
 using Domain.Enums;
 
 namespace Application.BlogContents.Queries.GetBlogContentWithPagination;
 
-public class BlogContentDto : IMapFrom<BlogContent>
+public class BlogContentWithTextAndMetasDto : IMapFrom<BlogContent>
 {
+    public BlogContentWithTextAndMetasDto()
+    {
+        Metas = new List<BlogMetaDto>();
+    }
+
     public string Title { get; set; } = default!;
 
     public string? Subtitle { get; set; }
@@ -20,5 +26,9 @@ public class BlogContentDto : IMapFrom<BlogContent>
     public bool AllowComment { get; set; }
 
     public int CommentCount { get; set; }
+
+    public BlogContentTextDto? Text { get; set; }
+
+    public List<BlogMetaDto> Metas { get; set; }
 }
 
