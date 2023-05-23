@@ -1,8 +1,11 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Common.Exceptions;
+using Application.Common.Interfaces;
 
 using Domain.Helpers;
 
 using MediatR;
+
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Auth.Commands.Register;
 
@@ -24,6 +27,13 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand>
 
     public async Task Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
+        var emailExist = await _context.UserInfos.AnyAsync(x => x.Email == request.Email, cancellationToken);
+
+        if (emailExist)
+        {
+            throw new ApiException("emial exist.");
+        }
+
         var (passwordHashed, salt) = PasswordHasher.HashPassword(request.Password);
 
         _context.UserInfos.Add(new Domain.Entities.UserInfo

@@ -19,7 +19,9 @@ public class UpdateBlogMetaCommandValidator : AbstractValidator<UpdateBlogMetaCo
             .IsInEnum();
 
         RuleFor(p => p.Parent)
-            .GreaterThanOrEqualTo(0);
+            .GreaterThanOrEqualTo(0)
+            .Must((m,current) => m.Id != current)
+            .WithMessage("'Parent' 不能为当前数据。");
 
         RuleFor(p => p.Order)
             .GreaterThanOrEqualTo(0);

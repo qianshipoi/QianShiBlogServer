@@ -29,7 +29,7 @@ namespace Domain.Helpers
 
         public static bool CompareHashPassword(string password, string saltStr, string hashedPassword)
         {
-            var salt = Encoding.Default.GetBytes(saltStr);
+            var salt = Convert.FromBase64String(saltStr);
 
             var hashed = Hash(password, salt);
 
