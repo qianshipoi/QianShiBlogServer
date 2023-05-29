@@ -2,8 +2,21 @@ using Infrastructure.Persistence;
 
 using Swashbuckle.AspNetCore.SwaggerUI;
 
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile("appsettings.Local.json");
+
+builder.Services.AddCors(options => {
+    options.AddPolicy(MyAllowSpecificOrigins,
+                      policy => {
+                          policy //.WithOrigins("http://localhost:3000")
+                          .AllowAnyOrigin()
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                      });
+});
+
 
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
@@ -34,10 +47,11 @@ else
 }
 
 app.UseHealthChecks("/health");
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 //app.UseStaticFiles();
 
 app.UseRouting();
+app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthentication();
 app.UseAuthorization();

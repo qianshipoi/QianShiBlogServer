@@ -21,6 +21,7 @@ public class BlogMetaController : ApiControllerBase
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<PaginatedList<BlogMetaDto>> GetBlogMetas([FromQuery] GetBlogMetasWithPaginationQuery query, CancellationToken cancellationToken = default)
     {
         return await Mediator.Send(query, cancellationToken);
