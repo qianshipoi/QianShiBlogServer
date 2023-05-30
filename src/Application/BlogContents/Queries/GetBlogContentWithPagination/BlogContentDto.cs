@@ -7,6 +7,8 @@ namespace Application.BlogContents.Queries.GetBlogContentWithPagination;
 
 public class BlogContentDto : IMapFrom<BlogContent>
 {
+    public int Id { get; set; }
+
     public string Title { get; set; } = default!;
 
     public string? Subtitle { get; set; }
