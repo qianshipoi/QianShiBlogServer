@@ -7,6 +7,8 @@ namespace Application.BlogMetas.Queries.GetBlogMetasWithPagination;
 
 public class BlogMetaDto : IMapFrom<BlogMeta>
 {
+    public int Id { get; set; }
+
     public string Name { get; set; } = default!;
 
     public int Order { get; set; }
