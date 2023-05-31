@@ -13,6 +13,7 @@ public class BlogContentWithTextAndMetasDto : IMapFrom<BlogContent>
         Metas = new List<BlogMetaDto>();
     }
 
+    public int Id { get; set; }
     public string Title { get; set; } = default!;
 
     public string? Subtitle { get; set; }
