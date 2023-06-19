@@ -1,6 +1,7 @@
 ﻿using Application.BlogContents.Queries.GetBlogContentWithPagination;
 using Application.Common.Exceptions;
 using Application.Common.Interfaces;
+using Application.Common.Wrappers;
 
 using AutoMapper;
 
@@ -12,9 +13,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.BlogContents.Queries.GetBlogContentWithTextById;
 
-public record GetBlogContentWithTextByIdQuery(int Id) : IRequest<BlogContentWithTextAndMetasDto>;
+public record GetBlogContentWithTextByIdQuery(int Id) : IRequest<Response<BlogContentWithTextAndMetasDto>>;
 
-public class GetBlogContentWithTextByIdQueryHandler : IRequestHandler<GetBlogContentWithTextByIdQuery, BlogContentWithTextAndMetasDto>
+public class GetBlogContentWithTextByIdQueryHandler : IRequestHandler<GetBlogContentWithTextByIdQuery, Response<BlogContentWithTextAndMetasDto>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IMapper _mapper;
@@ -25,7 +26,7 @@ public class GetBlogContentWithTextByIdQueryHandler : IRequestHandler<GetBlogCon
         _mapper = mapper;
     }
 
-    public async Task<BlogContentWithTextAndMetasDto> Handle(GetBlogContentWithTextByIdQuery request, CancellationToken cancellationToken)
+    public async Task<Response<BlogContentWithTextAndMetasDto>> Handle(GetBlogContentWithTextByIdQuery request, CancellationToken cancellationToken)
     {
         var entity = await _context.BlogContents
             .AsNoTracking()
@@ -38,6 +39,6 @@ public class GetBlogContentWithTextByIdQueryHandler : IRequestHandler<GetBlogCon
             throw new NotFoundException(nameof(BlogContent), request.Id);
         }
 
-        return _mapper.Map<BlogContentWithTextAndMetasDto>(entity);
+        return Response<BlogContentWithTextAndMetasDto>.Successful(_mapper.Map<BlogContentWithTextAndMetasDto>(entity));
     }
 }
