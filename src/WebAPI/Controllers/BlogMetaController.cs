@@ -15,14 +15,14 @@ namespace WebAPI.Controllers;
 public class BlogMetaController : ApiControllerBase
 {
     [HttpGet("{id:int}")]
-    public async Task<BlogMetaDto> GetBlogMetaById(int id, CancellationToken cancellationToken = default)
+    public async Task<Response<BlogMetaDto>> GetBlogMetaById(int id, CancellationToken cancellationToken = default)
     {
         return await Mediator.Send(new GetBlogMetaByIdQuery(id), cancellationToken);
     }
 
     [HttpGet]
     [AllowAnonymous]
-    public async Task<PaginatedList<BlogMetaDto>> GetBlogMetas([FromQuery] GetBlogMetasWithPaginationQuery query, CancellationToken cancellationToken = default)
+    public async Task<Response<PaginatedList<BlogMetaDto>>> GetBlogMetas([FromQuery] GetBlogMetasWithPaginationQuery query, CancellationToken cancellationToken = default)
     {
         return await Mediator.Send(query, cancellationToken);
     }

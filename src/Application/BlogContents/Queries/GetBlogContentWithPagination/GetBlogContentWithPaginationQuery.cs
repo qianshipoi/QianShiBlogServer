@@ -1,6 +1,7 @@
 ﻿using Application.Common.Interfaces;
 using Application.Common.Mappings;
 using Application.Common.Models;
+using Application.Common.Wrappers;
 
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -11,14 +12,14 @@ using MediatR;
 
 namespace Application.BlogContents.Queries.GetBlogContentWithPagination;
 
-public class GetBlogContentWithPaginationQuery : IRequest<PaginatedList<BlogContentDto>>
+public class GetBlogContentWithPaginationQuery : IRequest<Response<PaginatedList<BlogContentDto>>>
 {
     public BlogContentType? Type { get; set; }
     public int PageNumber { get; set; }
     public int PageSize { get; set; }
 }
 
-public class GetBlogContentWithPaginationQueryHandler : IRequestHandler<GetBlogContentWithPaginationQuery, PaginatedList<BlogContentDto>>
+public class GetBlogContentWithPaginationQueryHandler : IRequestHandler<GetBlogContentWithPaginationQuery, Response<PaginatedList<BlogContentDto>>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IMapper _mapper;
@@ -28,12 +29,12 @@ public class GetBlogContentWithPaginationQueryHandler : IRequestHandler<GetBlogC
         _mapper = mapper;
     }
 
-    public async Task<PaginatedList<BlogContentDto>> Handle(GetBlogContentWithPaginationQuery request, CancellationToken cancellationToken)
+    public async Task<Response<PaginatedList<BlogContentDto>>> Handle(GetBlogContentWithPaginationQuery request, CancellationToken cancellationToken)
     {
-        return await _context.BlogContents
+        return Response<PaginatedList<BlogContentDto>>.Successful(await _context.BlogContents
          .Where(x => x.Type == request.Type)
          .OrderBy(x => x.Modified)
          .ProjectTo<BlogContentDto>(_mapper.ConfigurationProvider)
-         .PaginatedListAsync(request.PageNumber, request.PageSize, cancellationToken);
+         .PaginatedListAsync(request.PageNumber, request.PageSize, cancellationToken));
     }
 }
